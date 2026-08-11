@@ -1,0 +1,29 @@
+{
+  "intrinsics": {
+    "width": 640,
+    "height": 480,
+    "fx": 1480.7766088800595,
+    "fy": 1650.7734785053453,
+    "ppx": 293.05026018776766,
+    "ppy": 242.6261104339026,
+    "model": "opencv_pinhole",
+    "coeffs": [
+      -5.134970786924233,
+      79.73187708395037,
+      -0.13056240740222835,
+      0.04341943245650744,
+      -938.1326920484314
+    ]
+  },
+  "calibration_metadata": {
+    "method": "cv2.calibrateCamera_fallback_from_charuco",
+    "rms_reprojection_error": 0.3626791887330736,
+    "frames_processed": 500,
+    "frames_used": 167,
+    "tag_dictionary": "DICT_5X5_100",
+    "charuco_squares_x": 6,
+    "charuco_squares_y": 8,
+    "charuco_square_size_m": 0.035,
+    "charuco_marker_size_m": 0.02
+  }
+}

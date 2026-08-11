@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Local helper file
+.codex
+
+# Runtime/generated assets
+artifacts/
+data/
+
+# Legacy cache/output folders
+record/__pycache__/
+app/__pycache__/
+common/__pycache__/
+pipelines/**/__pycache__/
+
