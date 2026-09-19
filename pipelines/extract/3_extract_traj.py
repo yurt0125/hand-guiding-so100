@@ -837,6 +837,27 @@ def postprocess_rows_for_training(
 ) -> None:
     if not rows:
         return
+
+    # Dyn-HaMR can briefly lose the hand in the middle of an otherwise valid
+    # sequence.  A missing hand must not be interpreted as a new gripper
+    # measurement: preserve the last observed opening until the hand is found
+    # again.  Leading missing rows intentionally remain NaN because no prior
+    # gripper state exists to hold.
+    last_gripper_cmd = math.nan
+    for row in rows:
+        try:
+            gripper_cmd = float(row.get("gripper_cmd", math.nan))
+        except (TypeError, ValueError):
+            gripper_cmd = math.nan
+
+        if np.isfinite(gripper_cmd):
+            last_gripper_cmd = gripper_cmd
+            continue
+
+        if int(row.get("hand_found", 0)) == 0 and np.isfinite(last_gripper_cmd):
+            row["gripper_cmd"] = float(last_gripper_cmd)
+            row["pinch_source"] = "hold_last_missing_hand"
+
     df = pd.DataFrame(rows)
     core_cols = ["mid_base_x", "mid_base_y", "mid_base_z", "tool_axis_x", "tool_axis_y", "tool_axis_z", "gripper_cmd"]
     for col in core_cols:

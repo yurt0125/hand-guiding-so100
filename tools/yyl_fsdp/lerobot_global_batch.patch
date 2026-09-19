@@ -1,0 +1,106 @@
+--- lerobot/scripts/lerobot_train.py
++++ lerobot/scripts/lerobot_train.py
+@@ -15,6 +15,7 @@
+ # limitations under the License.
+ import dataclasses
+ import logging
++import os
+ import time
+ from contextlib import nullcontext
+ from pprint import pformat
+@@ -318,6 +319,18 @@
+ 
+     num_learnable_params = sum(p.numel() for p in policy.parameters() if p.requires_grad)
+     num_total_params = sum(p.numel() for p in policy.parameters())
++    num_processes = accelerator.num_processes
++    global_batch_size = cfg.batch_size
++    global_batch_mode = os.environ.get("LEROBOT_GLOBAL_BATCH_SIZE") == "1" and num_processes > 1
++    if global_batch_mode:
++        if global_batch_size % num_processes != 0:
++            raise ValueError(
++                f"Global batch size {global_batch_size} must be divisible by {num_processes}."
++            )
++        per_process_batch_size = global_batch_size // num_processes
++    else:
++        per_process_batch_size = global_batch_size
++    effective_batch_size = per_process_batch_size * num_processes
+
+     if is_main_process:
+         logging.info(colored("Output dir:", "yellow", attrs=["bold"]) + f" {cfg.output_dir}")
+@@ -330,9 +343,14 @@
+         logging.info(f"{cfg.steps=} ({format_big_number(cfg.steps)})")
+         logging.info(f"{dataset.num_frames=} ({format_big_number(dataset.num_frames)})")
+         logging.info(f"{dataset.num_episodes=}")
+-        num_processes = accelerator.num_processes
+-        effective_bs = cfg.batch_size * num_processes
+-        logging.info(f"Effective batch size: {cfg.batch_size} x {num_processes} = {effective_bs}")
++        logging.info(
++            f"Effective batch size: {per_process_batch_size} x {num_processes} = {effective_batch_size}"
++        )
++        if global_batch_mode:
++            logging.info(
++                f"Global batch mode enabled: CLI batch_size={global_batch_size}, "
++                f"per-process batch_size={per_process_batch_size}"
++            )
+         logging.info(f"{num_learnable_params=} ({format_big_number(num_learnable_params)})")
+         logging.info(f"{num_total_params=} ({format_big_number(num_total_params)})")
+ 
+@@ -353,7 +371,7 @@
+     dataloader = torch.utils.data.DataLoader(
+         dataset,
+         num_workers=cfg.num_workers,
+-        batch_size=cfg.batch_size,
++        batch_size=per_process_batch_size,
+         shuffle=shuffle and not cfg.dataset.streaming,
+         sampler=sampler,
+         pin_memory=device.type == "cuda",
+@@ -379,7 +397,6 @@
+     }
+ 
+     # Use effective batch size for proper epoch calculation in distributed training
+-    effective_batch_size = cfg.batch_size * accelerator.num_processes
+     train_tracker = MetricsTracker(
+         effective_batch_size,
+         dataset.num_frames,
+ import dataclasses
+ import logging
++import os
+ import time
+@@
+     num_learnable_params = sum(p.numel() for p in policy.parameters() if p.requires_grad)
+     num_total_params = sum(p.numel() for p in policy.parameters())
++    num_processes = accelerator.num_processes
++    global_batch_size = cfg.batch_size
++    global_batch_mode = os.environ.get("LEROBOT_GLOBAL_BATCH_SIZE") == "1" and num_processes > 1
++    if global_batch_mode:
++        if global_batch_size % num_processes != 0:
++            raise ValueError(
++                f"Global batch size {global_batch_size} must be divisible by {num_processes} processes."
++            )
++        per_process_batch_size = global_batch_size // num_processes
++    else:
++        per_process_batch_size = global_batch_size
++    effective_batch_size = per_process_batch_size * num_processes
+ 
+     if is_main_process:
+@@
+-        num_processes = accelerator.num_processes
+-        effective_bs = cfg.batch_size * num_processes
+-        logging.info(f"Effective batch size: {cfg.batch_size} x {num_processes} = {effective_bs}")
++        logging.info(
++            f"Effective batch size: {per_process_batch_size} x {num_processes} = {effective_batch_size}"
++        )
++        if global_batch_mode:
++            logging.info(
++                f"Global batch mode enabled: CLI batch_size={global_batch_size}, "
++                f"per-process batch_size={per_process_batch_size}"
++            )
+@@
+     dataloader = torch.utils.data.DataLoader(
+         dataset,
+         num_workers=cfg.num_workers,
+-        batch_size=cfg.batch_size,
++        batch_size=per_process_batch_size,
+@@
+-    effective_batch_size = cfg.batch_size * accelerator.num_processes
+     train_tracker = MetricsTracker(

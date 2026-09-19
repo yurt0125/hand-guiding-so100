@@ -8,10 +8,11 @@ __pycache__/
 # Runtime/generated assets
 artifacts/
 data/
+models/
+training_outputs/
 
 # Legacy cache/output folders
 record/__pycache__/
 app/__pycache__/
 common/__pycache__/
 pipelines/**/__pycache__/
-

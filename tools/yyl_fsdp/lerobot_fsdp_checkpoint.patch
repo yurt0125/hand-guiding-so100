@@ -1,0 +1,43 @@
+--- lerobot/scripts/lerobot_train.py
++++ lerobot/scripts/lerobot_train.py
+@@ -456,19 +456,30 @@
+             train_tracker.reset_averages()
+ 
+         if cfg.save_checkpoint and is_saving_step:
++            # FSDP full state-dict collection is collective: every rank must participate.
++            fsdp_state_dict = None
++            if accelerator.distributed_type.name == "FSDP":
++                fsdp_state_dict = accelerator.get_state_dict(policy)
+             if is_main_process:
+                 logging.info(f"Checkpoint policy after step {step}")
+                 checkpoint_dir = get_step_checkpoint_dir(cfg.output_dir, cfg.steps, step)
+-                save_checkpoint(
+-                    checkpoint_dir=checkpoint_dir,
+-                    step=step,
+-                    cfg=cfg,
+-                    policy=accelerator.unwrap_model(policy),
+-                    optimizer=optimizer,
+-                    scheduler=lr_scheduler,
+-                    preprocessor=preprocessor,
+-                    postprocessor=postprocessor,
+-                )
++                policy_to_save = accelerator.unwrap_model(policy)
++                original_state_dict = policy_to_save.state_dict
++                if fsdp_state_dict is not None:
++                    policy_to_save.state_dict = lambda *args, **kwargs: fsdp_state_dict
++                try:
++                    save_checkpoint(
++                        checkpoint_dir=checkpoint_dir,
++                        step=step,
++                        cfg=cfg,
++                        policy=policy_to_save,
++                        optimizer=optimizer,
++                        scheduler=lr_scheduler,
++                        preprocessor=preprocessor,
++                        postprocessor=postprocessor,
++                    )
++                finally:
++                    policy_to_save.state_dict = original_state_dict
+                 update_last_checkpoint(checkpoint_dir)
+                 if wandb_logger:
+                     wandb_logger.log_policy(checkpoint_dir)

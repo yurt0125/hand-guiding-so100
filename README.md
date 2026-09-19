@@ -23,6 +23,14 @@ python run_pipeline.py --mode replay \
   --target-offset-z -0.03
 ```
 
+标定
+lerobot-calibrate \
+  --robot.type=so100_follower \
+  --robot.port=/dev/ttyACM1 \
+  --robot.id=single_arm
+
+
+
 ## 0) 运行名
 
 ```bash
@@ -62,22 +70,68 @@ export RUN_NAME=export RUN_NAME=8.7_stack56
 export RUN_NAME=export RUN_NAME=8.7_stack78
 export RUN_NAME=export RUN_NAME=8.7_stack910
 
-export RUN_NAME=export RUN_NAME=8.10_push_test
-export RUN_NAME=export RUN_NAME=8.10_push1
-export RUN_NAME=export RUN_NAME=8.10_push2
-export RUN_NAME=export RUN_NAME=8.10_push3
-export RUN_NAME=export RUN_NAME=8.10_push4
-export RUN_NAME=export RUN_NAME=8.10_push5
-export RUN_NAME=export RUN_NAME=8.10_push6
-export RUN_NAME=export RUN_NAME=8.10_push7
-export RUN_NAME=export RUN_NAME=8.10_push8
-export RUN_NAME=export RUN_NAME=8.10_push9
-export RUN_NAME=export RUN_NAME=8.10_push10
+export RUN_NAME=export RUN_NAME=8.17_push_test
+export RUN_NAME=export RUN_NAME=8.17_push1
+export RUN_NAME=export RUN_NAME=8.17_push2
+export RUN_NAME=export RUN_NAME=8.17_push3
+export RUN_NAME=export RUN_NAME=8.17_push4
+export RUN_NAME=export RUN_NAME=8.17_push5
+export RUN_NAME=export RUN_NAME=8.17_push6
+export RUN_NAME=export RUN_NAME=8.17_push7
+export RUN_NAME=export RUN_NAME=8.17_push8
+export RUN_NAME=export RUN_NAME=8.17_push9
+export RUN_NAME=export RUN_NAME=8.17_push10
 
-export RUN_NAME=export RUN_NAME=8.10_flip_test
+export RUN_NAME=export RUN_NAME=8.11_flip_test
+export RUN_NAME=export RUN_NAME=8.11_flip1
+export RUN_NAME=export RUN_NAME=8.11_flip2
 
+export RUN_NAME=export RUN_NAME=8.12_button_test
+export RUN_NAME=export RUN_NAME=8.12_button12
+export RUN_NAME=export RUN_NAME=8.12_button34
+export RUN_NAME=export RUN_NAME=8.12_button56
+export RUN_NAME=export RUN_NAME=8.12_button78
+export RUN_NAME=export RUN_NAME=8.12_button910
 
+export RUN_NAME=export RUN_NAME=8.15_hanging_test
+export RUN_NAME=export RUN_NAME=8.15_hanging1
+export RUN_NAME=export RUN_NAME=8.15_hanging2
+export RUN_NAME=export RUN_NAME=8.15_hanging3
+export RUN_NAME=export RUN_NAME=8.15_hanging4
+export RUN_NAME=export RUN_NAME=8.15_hanging5
 
+export RUN_NAME=export RUN_NAME=8.15_hanging67-12
+
+export RUN_NAME=export RUN_NAME=8.15_hanging67-3
+export RUN_NAME=export RUN_NAME=8.15_hanging67-4
+export RUN_NAME=export RUN_NAME=8.15_hanging67-5
+export RUN_NAME=export RUN_NAME=8.15_hanging67-6
+
+export RUN_NAME=export RUN_NAME=8.15_hanging67-7
+export RUN_NAME=export RUN_NAME=8.15_hanging67-8
+export RUN_NAME=export RUN_NAME=8.15_hanging67-9
+export RUN_NAME=export RUN_NAME=8.15_hanging67-10
+
+export RUN_NAME=export RUN_NAME=8.15_hanging89-1
+export RUN_NAME=export RUN_NAME=8.15_hanging89-2
+export RUN_NAME=export RUN_NAME=8.15_hanging89-3
+export RUN_NAME=export RUN_NAME=8.15_hanging89-4
+
+export RUN_NAME=export RUN_NAME=8.15_hanging89-5
+export RUN_NAME=export RUN_NAME=8.15_hanging89-6
+export RUN_NAME=export RUN_NAME=8.15_hanging89-7
+export RUN_NAME=export RUN_NAME=8.15_hanging89-8
+
+export RUN_NAME=export RUN_NAME=8.15_hanging89-9
+export RUN_NAME=export RUN_NAME=8.15_hanging89-10
+export RUN_NAME=export RUN_NAME=8.15_hanging10-1
+export RUN_NAME=export RUN_NAME=8.15_hanging10-2
+
+export RUN_NAME=export RUN_NAME=8.15_hanging10-3
+export RUN_NAME=export RUN_NAME=8.15_hanging10-4
+export RUN_NAME=export RUN_NAME=8.15_hanging10-5
+
+export RUN_NAME=export RUN_NAME=9.17_banana-1
 
 
 
@@ -88,11 +142,11 @@ export RUN_NAME=export RUN_NAME=8.10_flip_test
 
 ```bash
 python calibration/1_dual_camera_robot_click_calibration.py \
-  --robot-port /dev/ttyACM0 \
+  --robot-port /dev/ttyACM1 \
   --rs-serial 216322074780 \
   --fps 15 \
   --control-hz 30 \
-  --min-pairs 5
+  --min-pairs 30
 
 # 如果机械臂仍然卡顿，加上 --profile-control 查看 IK/串口写入耗时。
 
@@ -178,7 +232,7 @@ python pipelines/hamer/4_dynhamr_remote_process.py \
 ```
 
 
-合并多份 HaMeR 输出（pkl + render 视频，命名与既有流程一致）：
+<!-- 合并多份 HaMeR 输出（pkl + render 视频，命名与既有流程一致）：
 ```bash
 python /home/robot/hand-guiding-so100/pipelines/hamer/6_merge_hamer_packages.py \
   --hamer-input-dirs \
@@ -204,7 +258,7 @@ python /home/robot/hand-guiding-so100/pipelines/hamer/6_merge_hamer_packages.py 
 ```
 说明：输出将为
 - `data/hamer_outputs/${RUN_NAME}/${RUN_NAME}_d435_chunk-000_file-000/${RUN_NAME}_d435_chunk-000_file-000.pkl`
-- `data/hamer_outputs/${RUN_NAME}/${RUN_NAME}_d435_chunk-000_file-000/results/render_all_500.0.mp4`
+- `data/hamer_outputs/${RUN_NAME}/${RUN_NAME}_d435_chunk-000_file-000/results/render_all_500.0.mp4` -->
 
 
 banana_config
@@ -214,6 +268,10 @@ banana_config
 stacks_config
   --pinch-close-m 0.035 \
   --pinch-open-m 0.125
+
+hanging_config
+  --pinch-close-m 0.03 \
+  --pinch-open-m 0.065
 
 ## 4) 轨迹提取（abs.csv）
 
@@ -226,8 +284,8 @@ PYTHONPATH=. python pipelines/extract/3_extract_traj.py \
   --hand right \
   --patch-radius 0 \
   --max-missing-gap 8 \
-  --pinch-close-m 0.08 \
-  --pinch-open-m 0.125
+  --pinch-close-m 0.035 \
+  --pinch-open-m 0.15
 ```
 
 ## 5) 轨迹可视化验收（Rerun）
@@ -285,15 +343,24 @@ push_config
   --target-offset-y 0.00 \
   --target-offset-z -0.01 \
 
+hanging_config
+  --target-offset-x -0.002 \
+  --target-offset-y -0.006 \
+  --target-offset-z -0.004 \
+
+  --target-offset-x 0.002 \
+  --target-offset-y -0.005 \
+  --target-offset-z -0.00 \
+
 连实机 replay：
 ```bash
 PYTHONPATH=third-party/lerobot/src:. python run_pipeline.py --mode replay \
   --csv-path data/replay_csv/${RUN_NAME}/${RUN_NAME}_d435_chunk-000_file-000_abs.csv \
-  --port /dev/ttyACM0 \
+  --port /dev/ttyACM1 \
   --fps 30 \
-  --target-offset-x -0.002 \
-  --target-offset-y 0.00 \
-  --target-offset-z -0.01 \
+  --target-offset-x 0.015 \
+  --target-offset-y 0.005 \
+  --target-offset-z -0.03 \
   --episode-reset-time-s 8 \
   --profile-control
 ```
@@ -303,12 +370,12 @@ replay的同时会导出机械臂的视频：
 ```bash
 python run_pipeline.py --mode replay \
   --csv-path /home/robot/hand-guiding-so100/data/replay_csv/${RUN_NAME}/${RUN_NAME}_d435_chunk-000_file-000_abs.csv \
-  --port /dev/ttyACM0 \
+  --port /dev/ttyACM1 \
   --fps 30 \
-  --target-offset-x -0.002 \
-  --target-offset-y 0.00 \
-  --target-offset-z -0.01 \
-  --episode-reset-time-s 10 \
+  --target-offset-x 0.015 \
+  --target-offset-y 0.005 \
+  --target-offset-z -0.03 \
+  --episode-reset-time-s 12 \
   --export-action-csv /home/robot/hand-guiding-so100/data/replay_csv/${RUN_NAME}/${RUN_NAME}_sent_action.csv \
   --record-video-path /home/robot/hand-guiding-so100/data/replay_videos/${RUN_NAME}_robot.mp4 \
   --record-rs-serial 216322074780 \
@@ -340,7 +407,7 @@ PYTHONPATH=third-party/lerobot/src:. python pipelines/train/prepare_act_dataset_
 ```bash
 lerobot-replay \
   --robot.type=so100_follower \
-  --robot.port=/dev/ttyACM0 \
+  --robot.port=/dev/ttyACM1 \
   --robot.id=single_arm \
   --robot.use_degrees=true \
   --dataset.repo_id=${RUN_NAME}_from_sent_action \
@@ -400,8 +467,8 @@ lerobot-train \
 RUN_NAME=5.8_act_test2_from_sent_action
 
 lerobot-record \
-  --robot.type=so100_follower --robot.port=/dev/ttyACM1 --robot.id=single_arm \
-  --teleop.type=so101_leader --teleop.port=/dev/ttyACM0 --teleop.id=3204 \
+  --robot.type=so100_follower --robot.port=/dev/ttyACM1 --robot.id=leader \
+  --teleop.type=so100_leader --teleop.port=/dev/ttyACM0 --teleop.id=3204 \
   --robot.disable_torque_on_disconnect=true \
   --robot.cameras="{'d435': {'type': 'intelrealsense', 'serial_number_or_name': '216322074780', 'width': 640, 'height': 480, 'fps': 30}}" \
   --display_data=true \
@@ -486,3 +553,230 @@ PYTHONPATH=. python pipelines/visualize/4_visualize_traj_rerun.py \
 
 8、回放时，机械臂起点和可运行第一帧之间有一小段距离，会突然移动过去，不够优雅	在他们直接直接插入几个点（图像也需对应）
 ```
+
+## 官方遥操作命令（SO101）
+
+```bash
+# lerobot-teleoperate \
+#   --robot.type=so100_follower \
+#   --robot.port=/dev/ttyACM1 \
+#   --robot.id=single_arm \
+#   --teleop.type=so100_leader \
+#   --teleop.port=/dev/ttyACM0 \
+#   --teleop.id=leader
+
+lerobot-teleoperate \
+  --robot.type=so100_follower \
+  --robot.port=/dev/ttyACM1 \
+  --robot.id=single_arm \
+  --robot.calibration_dir=/home/robot/.cache/huggingface/lerobot/calibration/robots/so100_follower \
+  --robot.disable_torque_on_disconnect=true \
+  --teleop.type=so100_leader \
+  --teleop.port=/dev/ttyACM0 \
+  --teleop.id=leader \
+  --teleop.calibration_dir=/home/robot/.cache/huggingface/lerobot/calibration/teleoperators/so100_leader
+
+
+export RUN_NAME=smolvla_banana_910
+export RUN_NAME=smolvla_blocks_910
+export RUN_NAME=smolvla_push_910
+export RUN_NAME=smolvla_stacks_910
+export RUN_NAME=smolvla_hanging_910
+export RUN_NAME=smolvla_pull_910
+
+
+
+
+lerobot-record \
+  --robot.type=so100_follower \
+  --robot.port=/dev/ttyACM1 \
+  --robot.id=single_arm \
+  --robot.calibration_dir=/home/robot/.cache/huggingface/lerobot/calibration/robots/so100_follower \
+  --robot.cameras="{d435: {type: intelrealsense, serial_number_or_name: 216322074780, width: 640, height: 480, fps: 30}}" \
+  --teleop.type=so100_leader \
+  --teleop.port=/dev/ttyACM0 \
+  --teleop.id=leader \
+  --teleop.calibration_dir=/home/robot/.cache/huggingface/lerobot/calibration/teleoperators/so100_leader \
+  --dataset.repo_id=RITAHuang/${RUN_NAME} \
+  --dataset.root=/home/robot/.cache/huggingface/lerobot/RITAHuang/${RUN_NAME} \
+  --dataset.single_task="hanging" \
+  --dataset.fps=30 \
+  --dataset.episode_time_s=40 \
+  --dataset.reset_time_s=15 \
+  --dataset.num_episodes=10 \
+  --dataset.push_to_hub=false \
+  --display_data=true \
+  --play_sounds=true
+
+
+  --resume=true
+
+```
+
+## yyl2：合并香蕉数据集上传与官方 SmolVLA 训练（GPU 7）
+
+本地将 50 条合并数据集上传到 `yyl2`：
+
+```bash
+rsync -a --progress \
+  /home/robot/.cache/huggingface/lerobot/RITAHuang/smolvla_banana_0_49_merged/ \
+  yyl2:/home/yyl/.cache/huggingface/lerobot/RITAHuang/smolvla_banana_0_49_merged/
+```
+
+服务器使用官方 LeRobot 0.4.3 SmolVLA 微调入口，并固定使用物理 GPU 7：
+
+```bash
+HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 CUDA_VISIBLE_DEVICES=7 \
+/home/yyl/anaconda3/envs/lerobot/bin/lerobot-train \
+  --dataset.repo_id=RITAHuang/smolvla_banana_0_49_merged \
+  --dataset.root=/home/yyl/.cache/huggingface/lerobot/RITAHuang/smolvla_banana_0_49_merged \
+  --dataset.video_backend=pyav \
+  --policy.path=/data1/hrd/models/smolvla_base \
+  --policy.vlm_model_name=/data1/hrd/models/SmolVLM2-500M-Video-Instruct \
+  --policy.input_features=null \
+  --policy.output_features=null \
+  --output_dir=/home/yyl/lerobot_outputs/smolvla/smolvla_banana_0_49_merged_run1 \
+  --job_name=smolvla_banana_0_49_merged_train \
+  --policy.device=cuda \
+  --batch_size=64 \
+  --num_workers=12 \
+  --wandb.enable=false \
+  --policy.push_to_hub=false \
+  --steps=10000 \
+  --save_freq=5000
+```
+
+## 本地：训练完成的 SmolVLA 策略推理（policy rollout）
+
+模型下载至本机 `training_outputs/` 后，使用官方 `lerobot-record` 进行策略推理。以下以 banana 模型为例；主臂仅用于 episode 间的安全复位，正式 rollout 仍由策略控制。
+
+```bash
+lerobot-record \
+  --robot.type=so100_follower \
+  --robot.port=/dev/ttyACM1 \
+  --robot.id=single_arm \
+  --robot.calibration_dir=/home/robot/.cache/huggingface/lerobot/calibration/robots/so100_follower \
+  --robot.cameras="{'d435': {'type': 'intelrealsense', 'serial_number_or_name': '216322074780', 'width': 640, 'height': 480, 'fps': 30}}" \
+  --teleop.type=so100_leader \
+  --teleop.port=/dev/ttyACM0 \
+  --teleop.id=leader \
+  --teleop.calibration_dir=/home/robot/.cache/huggingface/lerobot/calibration/teleoperators/so100_leader \
+  --policy.path=/home/robot/hand-guiding-so100/training_outputs/smolvla_banana_0_49_merged_run1/checkpoints/010000/pretrained_model \
+  --policy.device=cuda \
+  --dataset.repo_id=RITAHuang/eval_smolvla_banana_round6 \
+  --dataset.root=/home/robot/.cache/huggingface/lerobot/RITAHuang/eval_smolvla_banana_round6 \
+  --dataset.push_to_hub=false \
+  --dataset.single_task="Pick up the banana" \
+  --dataset.fps=30 \
+  --dataset.episode_time_s=60 \
+  --dataset.reset_time_s=30 \
+  --dataset.num_episodes=10 \
+  --display_data=true \
+  --play_sounds=true
+```
+
+
+- banana checkpoint 已配置为使用本机 `/home/robot/hand-guiding-so100/models/SmolVLM2-500M-Video-Instruct`；该目录必须保留。
+- 对其他任务，替换 `--policy.path` 内的任务目录和 `--dataset.single_task`；最终模型均在 `checkpoints/010000/pretrained_model`。
+
+### 六个任务的统一 rollout 命令
+
+先执行一次下方函数定义；随后每次只执行一条任务调用。主臂只在 episode 间的 reset 环节控制从臂，正式 rollout 由策略控制。`round` 名可改为未使用的编号，避免混入已有评估数据。
+
+```bash
+run_smolvla_rollout() {
+  local task="$1" run="$2" task_text="$3" eval_round="$4" checkpoint="${5:-010000}"
+  lerobot-record \
+    --robot.type=so100_follower \
+    --robot.port=/dev/ttyACM1 \
+    --robot.id=single_arm \
+    --robot.calibration_dir=/home/robot/.cache/huggingface/lerobot/calibration/robots/so100_follower \
+    --robot.disable_torque_on_disconnect=true \
+    --robot.cameras="{'d435': {'type': 'intelrealsense', 'serial_number_or_name': '216322074780', 'width': 640, 'height': 480, 'fps': 30}}" \
+    --teleop.type=so100_leader \
+    --teleop.port=/dev/ttyACM0 \
+    --teleop.id=leader \
+    --teleop.calibration_dir=/home/robot/.cache/huggingface/lerobot/calibration/teleoperators/so100_leader \
+    --policy.path="/home/robot/hand-guiding-so100/training_outputs/smolvla_${task}_0_49_merged_${run}/checkpoints/${checkpoint}/pretrained_model" \
+    --policy.device=cuda \
+    --dataset.repo_id="RITAHuang/eval_smolvla_${task}_${eval_round}" \
+    --dataset.root="/home/robot/.cache/huggingface/lerobot/RITAHuang/eval_smolvla_${task}_${eval_round}" \
+    --dataset.push_to_hub=false \
+    --dataset.single_task="$task_text" \
+    --dataset.fps=30 \
+    --dataset.episode_time_s=60 \
+    --dataset.reset_time_s=30 \
+    --dataset.num_episodes=10 \
+    --display_data=true \
+    --play_sounds=true
+}
+
+# 每次仅取消一条命令开头的 #：
+
+# run1：保留旧模型及其训练时使用的旧文本
+run_smolvla_rollout banana   run1  "Pick up the banana"  round8
+run_smolvla_rollout blocks   run1  "Pick up the banana"  round2
+run_smolvla_rollout hanging  run1  "hanging"             round1
+run_smolvla_rollout stacks   run1  "stacks"              round2
+run_smolvla_rollout pull     run1  "hanging"             round1
+run_smolvla_rollout push     run1  "Pick up the banana"  round3
+
+# run2：对应模型训练完成后再执行
+run_smolvla_rollout blocks   run2  "Put the green block in the basket"      round1
+run_smolvla_rollout push     run2  "Push the green block to the target area" round1
+run_smolvla_rollout pull     run2  "Pull the storage box"                    round1
+run_smolvla_rollout stacks   run2  "Stack the blocks"                        round1
+run_smolvla_rollout hanging  run2  "Hang the tape"                           round1
+
+# 测试 run1 的 5,000-step checkpoint（使用它训练时的原任务文本）：
+run_smolvla_rollout stacks  run1  "stacks"              round3 005000
+run_smolvla_rollout push    run1  "Pick up the banana"  round3 005000
+```
+
+<!-- 
+## yyl2：合并 blocks 数据集上传与官方 SmolVLA 训练（GPU 4）
+
+```bash
+# 本地合并五个 10-episode 批次（保留原始批次）
+lerobot-edit-dataset \
+  --repo_id=RITAHuang/smolvla_blocks_0_49_merged \
+  --operation.type=merge \
+  --operation.repo_ids="['RITAHuang/smolvla_blocks_12', 'RITAHuang/smolvla_blocks_34', 'RITAHuang/smolvla_blocks_56', 'RITAHuang/smolvla_blocks_78', 'RITAHuang/smolvla_blocks_910']" \
+  --push_to_hub=false
+
+# 上传至 yyl2
+rsync -a --progress \
+  /home/robot/.cache/huggingface/lerobot/RITAHuang/smolvla_blocks_0_49_merged/ \
+  yyl2:/home/yyl/.cache/huggingface/lerobot/RITAHuang/smolvla_blocks_0_49_merged/
+
+# yyl2：使用空闲的物理 GPU 4 进行离线 SmolVLA 训练
+HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 CUDA_VISIBLE_DEVICES=4 \
+/home/yyl/anaconda3/envs/lerobot/bin/lerobot-train \
+  --policy.path=/data1/hrd/models/smolvla_base \
+  --policy.vlm_model_name=/data1/hrd/models/SmolVLM2-500M-Video-Instruct \
+  --policy.input_features=null \
+  --policy.output_features=null \
+  --dataset.repo_id=RITAHuang/smolvla_blocks_0_49_merged \
+  --dataset.root=/home/yyl/.cache/huggingface/lerobot/RITAHuang/smolvla_blocks_0_49_merged \
+  --output_dir=/home/yyl/lerobot_outputs/smolvla/smolvla_blocks_0_49_merged_run1 \
+  --job_name=smolvla_blocks_0_49_merged_train \
+  --policy.device=cuda \
+  --batch_size=64 \
+  --num_workers=0 \
+  --wandb.enable=false \
+  --policy.push_to_hub=false \
+  --steps=10000 \
+  --save_freq=5000
+``` -->
+
+lerobot-replay \
+  --robot.type=so100_follower \
+  --robot.port=/dev/ttyACM1 \
+  --robot.id=single_arm \
+  --robot.calibration_dir=/home/robot/.cache/huggingface/lerobot/calibration/robots/so100_follower \
+  --robot.disable_torque_on_disconnect=true \
+  --dataset.repo_id=RITAHuang/smolvla_push_0_49_merged \
+  --dataset.root=/home/robot/.cache/huggingface/lerobot/RITAHuang/smolvla_push_0_49_merged \
+  --dataset.episode=3 \
+  --dataset.fps=30 \
+  --play_sounds=false

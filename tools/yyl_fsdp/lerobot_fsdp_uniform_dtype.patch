@@ -1,0 +1,10 @@
+--- a/lerobot/scripts/lerobot_train.py
++++ b/lerobot/scripts/lerobot_train.py
+@@
+     # Prepare everything with accelerator
++    # SmolVLA loads its VLM backbone in bfloat16 while its action head remains
++    # float32. FSDP flat parameters require a uniform dtype. Convert once before
++    # wrapping; Accelerate's FSDP fp16 mixed-precision policy controls compute.
++    if accelerator.distributed_type == DistributedType.FSDP:
++        policy.to(dtype=torch.float32)
+     accelerator.wait_for_everyone()
